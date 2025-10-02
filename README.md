@@ -25,8 +25,8 @@ pip install flask sqlalchemy requests
 
 ### Clone the Repository:
 ```bash
-git clone <repository-url>
-cd <repository-directory>
+git clone https://github.com/dev-gokulkrishnanm/currency_api/
+cd currency_api
 ```
 
 ### Run the Data Pipeline:
@@ -73,8 +73,6 @@ curl "http://127.0.0.1:5000/convert?amount=100&from=USD&to=EUR"
 - **Missing parameters**: `{"error": "Missing 'from', 'to', or 'amount' parameter"}` (HTTP 400)
 - **Invalid amount**: `{"error": "'amount' must be a number"}` (HTTP 400)
 - **Unsupported currency**: `{"error": "Currency pair USD->EUR not found"}` (HTTP 400)
-
-## Data Pipeline
 
 ## Data Pipeline
 
