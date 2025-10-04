@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
+import json
 import sqlite3
 
 
@@ -32,11 +33,14 @@ def convert_currency():
     amount_value=curr_value*curr_dic[to_currency]
     
 
-    return jsonify({
+    return Response(
+    json.dumps({
         'amount': amount,
         'from': from_currency,
         'to': to_currency,
         'converted_amount': amount_value,
-    })
+    }, indent=5),  # this adds newlines
+    mimetype='application/json'
+)
         
 app.run(debug=False)

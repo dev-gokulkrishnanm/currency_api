@@ -3,6 +3,7 @@ from sqlalchemy.dialects.sqlite import insert
 import datetime
 import requests
 from pprint import pprint
+import os
 import logging
 
 logging.basicConfig(
@@ -25,7 +26,9 @@ def _filter(data):
 
 def load_data(rates, base, last_update):
     logging.info("Loading data into databse")
-    engine=create_engine('sqlite:///currency.db',echo=False)
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(BASE_DIR, "currency.db")
+    engine=create_engine(f'sqlite:///{db_path}',echo=False)
     meta=MetaData()
 
     exchange_rates=Table(
@@ -37,7 +40,7 @@ def load_data(rates, base, last_update):
     )
     meta.create_all(engine)
 
-    with engine.connect() as conn:
+    with engine.begin() as conn:
         for curr, rate in rates.items():
             dataset=insert(exchange_rates).values(
                 currency=curr,
@@ -46,10 +49,11 @@ def load_data(rates, base, last_update):
                 last_update=datetime.datetime.strptime(last_update, '%Y-%m-%d').date()
             ).prefix_with("OR IGNORE")
             conn.execute(dataset)
-            conn.commit()
-    logging.info("Data loaded successfully")
-if __name__=='__main__':
+            
+    logging.info("Data loaded successfully new update")
+def run_etl():
     url='https://api.exchangerate-api.com/v4/latest/usd'
     data=fetch_data(url)
     rates,base,last_update=_filter(data)
     load_data(rates, base, last_update)     
+run_etl()
